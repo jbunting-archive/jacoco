@@ -59,6 +59,12 @@ public class MergeMojo extends AbstractJacocoMojo {
 		executeMerge();
 	}
 
+	@Override
+	protected boolean isPackagingInvalid()
+	{
+		return false;
+	}
+
 	private boolean canMergeReports() {
 		if (fileSets == null || fileSets.isEmpty()) {
 			getLog().info(MSG_SKIPPING);

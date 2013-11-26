@@ -144,10 +144,10 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
 
 	@Override
 	public boolean canGenerateReport() {
-		if ("pom".equals(project.getPackaging())) {
-			getLog().info("Skipping JaCoCo for project with packaging type 'pom'");
-			return false;
-		}
+//		if ("pom".equals(project.getPackaging())) {
+//			getLog().info("Skipping JaCoCo for project with packaging type 'pom'");
+//			return false;
+//		}
 		if (skip) {
 			getLog().info("Skipping JaCoCo execution");
 			return false;
@@ -206,13 +206,18 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
 	protected void createReport(final IReportGroupVisitor visitor) throws IOException {
 		final FileFilter fileFilter = new FileFilter(this.getIncludes(),
 				this.getExcludes());
-		final BundleCreator creator = new BundleCreator(this.getProject(),
-				fileFilter);
+		final BundleCreator creator = createBundleCreator(fileFilter);
 		final IBundleCoverage bundle = creator.createBundle(executionDataStore);
 		final SourceFileCollection locator = new SourceFileCollection(
 				getCompileSourceRoots(), sourceEncoding);
 		checkForMissingDebugInformation(bundle);
 		visitor.visitBundle(bundle, locator);
+	}
+
+	protected BundleCreator createBundleCreator(final FileFilter fileFilter)
+	{
+		return new BundleCreator(this.getProject(),
+				fileFilter);
 	}
 
 	protected void checkForMissingDebugInformation(final ICoverageNode node) {

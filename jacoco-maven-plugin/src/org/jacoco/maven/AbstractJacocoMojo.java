@@ -58,9 +58,9 @@ public abstract class AbstractJacocoMojo extends AbstractMojo {
 
 	public final void execute() throws MojoExecutionException,
 			MojoFailureException {
-		if ("pom".equals(project.getPackaging())) {
+		if (isPackagingInvalid()) {
 			getLog().info(
-					"Skipping JaCoCo for project with packaging type 'pom'");
+					"Skipping JaCoCo for project with packaging type '" + project.getPackaging() + "'");
 			skipMojo();
 			return;
 		}
@@ -70,6 +70,11 @@ public abstract class AbstractJacocoMojo extends AbstractMojo {
 			return;
 		}
 		executeMojo();
+	}
+
+	protected boolean isPackagingInvalid()
+	{
+		return "pom".equals(project.getPackaging());
 	}
 
 	/**

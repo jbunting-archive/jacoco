@@ -12,7 +12,11 @@
 package org.jacoco.maven;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+
+import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
  * Creates a code coverage report for tests of a single project in multiple formats
@@ -44,9 +48,44 @@ public class ReportMojo extends AbstractReportMojo {
 	 */
 	private File dataFile;
 
+	/**
+	 * A pattern matching directories with compiled classes.
+	 *
+	 * @parameter
+	 */
+	private String classDirectoryPattern;
+
 	@Override
 	protected String getOutputDirectory() {
 		return outputDirectory.getAbsolutePath();
+	}
+
+	@Override
+	protected BundleCreator createBundleCreator(final FileFilter fileFilter)
+	{
+		if(this.classDirectoryPattern == null)
+		{
+			return super.createBundleCreator(fileFilter);
+		}
+		else
+		{
+			DirectoryScanner scanner = new DirectoryScanner();
+
+			scanner.setBasedir(project.getBasedir());
+			scanner.setIncludes(new String[] { this.classDirectoryPattern });
+
+			scanner.scan();
+
+			String[] includeds = scanner.getIncludedDirectories();
+			List<File> files = new ArrayList<File>();
+			getLog().error("TOTAL PATHS FOUND::: " + includeds.length);
+			for(String included: includeds)
+			{
+				getLog().error("INCLUDED PATH::: " + included);
+				files.add(new File(included));
+			}
+			return new BundleCreator(project, fileFilter, files);
+		}
 	}
 
 	@Override
