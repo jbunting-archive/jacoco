@@ -144,10 +144,11 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
 
 	@Override
 	public boolean canGenerateReport() {
-//		if ("pom".equals(project.getPackaging())) {
-//			getLog().info("Skipping JaCoCo for project with packaging type 'pom'");
-//			return false;
-//		}
+		if (isPackagingInvalid()) {
+			getLog().info(
+					"Skipping JaCoCo for project with packaging type '" + project.getPackaging() + "'");
+			return false;
+		}
 		if (skip) {
 			getLog().info("Skipping JaCoCo execution");
 			return false;
@@ -158,6 +159,11 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
 		}
 		return true;
 	}
+
+	protected boolean isPackagingInvalid() {
+		return "pom".equals(project.getPackaging());
+	}
+
 
 	/**
 	 * This method is called when the report generation is invoked directly as a

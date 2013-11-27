@@ -45,7 +45,7 @@ public final class BundleCreator
 	{
 		this.project = project;
 		this.fileFilter = fileFilter;
-		this.classesDirs = Collections.singletonList(project.getBuild().getOutputDirectory());
+		this.classesDirs = Collections.singletonList(new File(project.getBuild().getOutputDirectory()));
 	}
 
 	public BundleCreator(final MavenProject project, final FileFilter fileFilter, final List<File> classesDirs)
